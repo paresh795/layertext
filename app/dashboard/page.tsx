@@ -68,12 +68,20 @@ export default async function DashboardPage() {
                 <p className="mt-1 text-sm text-gray-600">
                   Images ready for processing
                 </p>
-                <Link 
-                  href="/upload"
-                  className="mt-2 inline-block text-sm font-medium text-blue-600 hover:text-blue-700"
-                >
-                  Upload new image →
-                </Link>
+                <div className="mt-2 space-y-1">
+                  <Link 
+                    href="/upload"
+                    className="block text-sm font-medium text-blue-600 hover:text-blue-700"
+                  >
+                    Upload new image →
+                  </Link>
+                  <Link 
+                    href="/history"
+                    className="block text-sm font-medium text-gray-600 hover:text-gray-700"
+                  >
+                    View export history →
+                  </Link>
+                </div>
               </div>
               <div className="rounded-lg bg-gray-50 p-4">
                 <h3 className="font-medium text-gray-900">Account</h3>

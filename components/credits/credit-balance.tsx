@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { CreditCard, Plus } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { CreditCard } from 'lucide-react'
+import { BuyCreditsButton } from '@/components/payments/buy-credits-button'
 
 interface CreditBalanceProps {
   showAddButton?: boolean
@@ -34,27 +34,9 @@ export function CreditBalance({ showAddButton = false, className = '' }: CreditB
     }
   }
 
-  const addTestCredits = async () => {
-    try {
-      const response = await fetch('/api/credits', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ amount: 10 }),
-      })
-
-      const result = await response.json()
-
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to add credits')
-      }
-
-      setCredits(result.credits)
-    } catch (err) {
-      console.error('Error adding credits:', err)
-      setError(err instanceof Error ? err.message : 'Failed to add credits')
-    }
+  // Refresh credits after payment
+  const refreshCredits = () => {
+    fetchCredits()
   }
 
   useEffect(() => {
@@ -89,16 +71,12 @@ export function CreditBalance({ showAddButton = false, className = '' }: CreditB
       }`}>
         {credits} credits
       </span>
-      {showAddButton && (
-        <Button
-          variant="outline"
+      {showAddButton && credits < 10 && (
+        <BuyCreditsButton
           size="sm"
-          onClick={addTestCredits}
-          className="ml-2 px-2 py-1 h-6 text-xs"
-        >
-          <Plus className="h-3 w-3 mr-1" />
-          Add 10
-        </Button>
+          variant="outline"
+          className="ml-2 h-6 text-xs"
+        />
       )}
     </div>
   )

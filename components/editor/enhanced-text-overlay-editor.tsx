@@ -308,7 +308,7 @@ export function EnhancedTextOverlayEditor({
         
         ctx.font = `${layer.fontWeight} ${layer.fontSize * scaleFactor}px ${layer.fontFamily}`
         ctx.fillStyle = layer.color
-        ctx.textAlign = 'center'
+        ctx.textAlign = layer.textAlign as CanvasTextAlign
         ctx.textBaseline = 'middle'
         ctx.globalAlpha = layer.opacity
         
@@ -321,7 +321,20 @@ export function EnhancedTextOverlayEditor({
         const x = (layer.x / 100) * canvas.width
         const y = (layer.y / 100) * canvas.height
         
-        ctx.fillText(layer.text, x, y)
+        // Handle letter spacing if needed
+        if (layer.letterSpacing && layer.letterSpacing !== 0) {
+          // Manual letter spacing implementation for canvas
+          const spacing = layer.letterSpacing * scaleFactor
+          const chars = layer.text.split('')
+          let currentX = x - (ctx.measureText(layer.text).width / 2) - ((chars.length - 1) * spacing / 2)
+          
+          chars.forEach((char) => {
+            ctx.fillText(char, currentX, y)
+            currentX += ctx.measureText(char).width + spacing
+          })
+        } else {
+          ctx.fillText(layer.text, x, y)
+        }
         
         // Reset shadow and alpha
         ctx.shadowColor = 'transparent'
