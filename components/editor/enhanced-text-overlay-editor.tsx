@@ -14,7 +14,6 @@ import {
   Eye, 
   EyeOff,
   Copy,
-  Move3D,
   Palette
 } from 'lucide-react'
 
@@ -84,9 +83,9 @@ const SafeImage = ({
   src: string
   alt: string
   className?: string
-  [key: string]: any
-}) => {
+} & React.ImgHTMLAttributes<HTMLImageElement>) => {
   return (
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       src={src}
       alt={alt}
@@ -262,7 +261,12 @@ export function EnhancedTextOverlayEditor({
   useEffect(() => {
     if (isDragging) {
       const handleGlobalMouseMove = (e: MouseEvent) => {
-        handleMouseMove(e as any)
+        // Create a React-like event object with the properties we need
+        const reactEvent = {
+          clientX: e.clientX,
+          clientY: e.clientY,
+        } as React.MouseEvent
+        handleMouseMove(reactEvent)
       }
       
       const handleGlobalMouseUp = () => {
@@ -378,6 +382,7 @@ export function EnhancedTextOverlayEditor({
       <canvas ref={canvasRef} className="hidden" />
       
       {/* Hidden images for canvas rendering */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         ref={backgroundImgRef}
         src={backgroundImageUrl}
@@ -385,6 +390,7 @@ export function EnhancedTextOverlayEditor({
         className="hidden"
         crossOrigin="anonymous"
       />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         ref={foregroundImgRef}
         src={foregroundImageUrl}
@@ -747,11 +753,11 @@ export function EnhancedTextOverlayEditor({
         <div className="bg-blue-50 rounded-lg p-4">
           <h4 className="font-medium text-blue-900 mb-2">How to use:</h4>
           <ul className="text-sm text-blue-700 space-y-1">
-            <li>• Click "Add Text" then click on image to place</li>
+            <li>• Click &quot;Add Text&quot; then click on image to place</li>
             <li>• Drag text to move around</li>
             <li>• Use layer panel to manage multiple texts</li>
             <li>• Customize each text independently</li>
-            <li>• Click "Export" to download final image</li>
+            <li>• Click &quot;Export&quot; to download final image</li>
           </ul>
         </div>
       </div>

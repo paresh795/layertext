@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { currentUser } from '@clerk/nextjs/server'
 import { removeBackground, isFalConfigured, validateImageUrl } from '@/lib/services/fal'
 import { supabaseAdmin } from '@/lib/supabase/client'
-import { hasCredits, deductUserCredits, getUserCredits } from '@/lib/services/credits'
+import { hasCredits, deductUserCredits } from '@/lib/services/credits'
 
 /**
  * POST /api/process

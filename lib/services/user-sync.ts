@@ -36,7 +36,7 @@ export async function initializeUser(clerkUser: User): Promise<UserInitResult> {
     validateClerkUserId(clerkUser.id)
 
     // Call the database function to initialize user credits
-    const { data, error } = await supabaseAdmin
+    const { error } = await supabaseAdmin
       .rpc('initialize_user_credits', {
         clerk_user_id: clerkUser.id
       })

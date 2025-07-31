@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { currentUser } from '@clerk/nextjs/server'
 import { supabaseAdmin } from '@/lib/supabase/client'
-import { type TextLayer } from '@/lib/services/export'
 
 /**
  * POST /api/export
@@ -18,7 +17,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { canvasDataUrl, textLayers, uploadId } = await request.json()
+    const { canvasDataUrl, textLayers } = await request.json()
 
     if (!canvasDataUrl) {
       return NextResponse.json(
@@ -44,7 +43,7 @@ export async function POST(request: NextRequest) {
     const filePath = `exports/${user.id}/${fileName}`
 
     // Upload to Supabase Storage
-    const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
+    const { error: uploadError } = await supabaseAdmin.storage
       .from('images')
       .upload(filePath, blob, {
         cacheControl: '3600',
@@ -133,7 +132,7 @@ export async function POST(request: NextRequest) {
  * GET /api/export
  * Get user's export history
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const user = await currentUser()
     

@@ -3,6 +3,7 @@ import { headers } from 'next/headers'
 import { stripe, webhookSecret, CREDIT_PACKAGE } from '@/lib/stripe/server'
 import { addUserCredits } from '@/lib/services/credits'
 import { supabaseAdmin } from '@/lib/supabase/client'
+import type Stripe from 'stripe'
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
     // Handle different event types
     switch (event.type) {
       case 'checkout.session.completed': {
-        const session = event.data.object as any
+        const session = event.data.object as Stripe.Checkout.Session
         const userId = session.client_reference_id || session.metadata?.userId
         
         if (!userId) {
@@ -44,16 +45,18 @@ export async function POST(request: NextRequest) {
         console.log('💰 Amount:', session.amount_total)
 
         // Create payment record
+        const paymentData = {
+          user_id: userId,
+          stripe_payment_id: (typeof session.payment_intent === 'string' ? session.payment_intent : session.payment_intent?.id) || session.id,
+          amount: session.amount_total || 0,
+          credits_granted: CREDIT_PACKAGE.CREDITS,
+          status: 'success' as const,
+          credit_grant_id: `stripe_${session.id}`, // Idempotency key
+        }
+        
         const { error: paymentError } = await supabaseAdmin
           .from('payments')
-          .insert({
-            user_id: userId,
-            stripe_payment_id: session.payment_intent || session.id,
-            amount: session.amount_total,
-            credits_granted: CREDIT_PACKAGE.CREDITS,
-            status: 'success',
-            credit_grant_id: `stripe_${session.id}`, // Idempotency key
-          })
+          .insert(paymentData)
 
         if (paymentError) {
           console.error('❌ Error creating payment record:', paymentError)
@@ -74,13 +77,13 @@ export async function POST(request: NextRequest) {
       }
 
       case 'checkout.session.expired': {
-        const session = event.data.object as any
+        const session = event.data.object as Stripe.Checkout.Session
         console.log('⏰ Checkout session expired:', session.id)
         break
       }
 
       case 'payment_intent.payment_failed': {
-        const paymentIntent = event.data.object as any
+        const paymentIntent = event.data.object as Stripe.PaymentIntent
         console.log('❌ Payment failed:', paymentIntent.id)
         
         // Log failed payment (optional)

@@ -1,5 +1,4 @@
 import { supabase, supabaseAdmin, createClerkSupabaseClient } from '@/lib/supabase/client'
-import { currentUser } from '@clerk/nextjs/server'
 
 export interface UploadResult {
   id: string
@@ -28,7 +27,7 @@ export async function uploadImage(file: File, userId: string): Promise<UploadRes
     const filePath = `uploads/${userId}/${fileName}`
 
     // Upload file to Supabase Storage using service role (bypasses RLS for storage)
-    const { data: uploadData, error: uploadError } = await supabaseAuth.storage
+    const { error: uploadError } = await supabaseAuth.storage
       .from('images')
       .upload(filePath, file, {
         cacheControl: '3600',

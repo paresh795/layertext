@@ -110,6 +110,7 @@ export default function UploadPage() {
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {uploads.map((upload) => (
                   <div key={upload.id} className="border rounded-lg p-4">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={upload.image_url}
                       alt="Uploaded image"
@@ -160,10 +161,10 @@ export default function UploadPage() {
           {/* Next Steps */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
             <h3 className="text-lg font-semibold text-blue-900 mb-2">
-              What's Next?
+              What&apos;s Next?
             </h3>
             <p className="text-blue-700 mb-4">
-              After uploading your image, you'll be able to:
+              After uploading your image, you&apos;ll be able to:
             </p>
             <ul className="list-disc list-inside space-y-1 text-blue-700">
               <li>Process images with AI background removal (Story 1.2)</li>

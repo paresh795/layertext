@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { currentUser } from '@clerk/nextjs/server'
 import { initializeUser, getUserCredits } from '@/lib/services/user-sync'
 
@@ -6,7 +6,7 @@ import { initializeUser, getUserCredits } from '@/lib/services/user-sync'
  * POST /api/user/sync
  * Initialize or sync user data with Supabase
  */
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     const user = await currentUser()
     
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
  * GET /api/user/sync
  * Get current user data and credit balance
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const user = await currentUser()
     

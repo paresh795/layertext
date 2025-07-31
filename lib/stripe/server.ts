@@ -14,7 +14,7 @@ if (!stripeWebhookSecret) {
 
 // Create Stripe instance
 export const stripe = new Stripe(stripeSecretKey, {
-  apiVersion: '2024-12-18.acacia',
+  apiVersion: '2025-06-30.basil',
   typescript: true,
 })
 
@@ -40,5 +40,5 @@ export const stripeConfig = {
   successUrl: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?payment=success`,
   cancelUrl: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?payment=cancelled`,
   allowedCountries: ['US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'NL', 'SE', 'NO', 'DK', 'FI'] as const,
-  paymentMethods: ['card'] as const,
+  paymentMethods: ['card'] as Stripe.Checkout.SessionCreateParams.PaymentMethodType[],
 }

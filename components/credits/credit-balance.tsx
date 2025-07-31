@@ -34,10 +34,6 @@ export function CreditBalance({ showAddButton = false, className = '' }: CreditB
     }
   }
 
-  // Refresh credits after payment
-  const refreshCredits = () => {
-    fetchCredits()
-  }
 
   useEffect(() => {
     fetchCredits()

@@ -1,8 +1,7 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { ArrowLeft, Loader2, AlertCircle, CheckCircle2, CreditCard } from 'lucide-react'
+import React, { useState, useEffect, useCallback } from 'react'
+import { ArrowLeft, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { EnhancedTextOverlayEditor } from '@/components/editor/enhanced-text-overlay-editor'
@@ -26,19 +25,13 @@ interface ProcessingState {
 
 export default function EditorPage({ params }: { params: Promise<{ uploadId: string }> }) {
   const resolvedParams = React.use(params)
-  const router = useRouter()
   const [upload, setUpload] = useState<Upload | null>(null)
   const [processing, setProcessing] = useState<ProcessingState>({ status: 'idle' })
   const [loading, setLoading] = useState(true)
   const [exporting, setExporting] = useState(false)
   const [processingStarted, setProcessingStarted] = useState(false)
 
-  // Fetch upload data
-  useEffect(() => {
-    fetchUpload()
-  }, [resolvedParams.uploadId])
-
-  const fetchUpload = async () => {
+  const fetchUpload = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/upload`)
@@ -56,11 +49,7 @@ export default function EditorPage({ params }: { params: Promise<{ uploadId: str
 
       setUpload(foundUpload)
 
-      // If not processed yet, automatically start processing (with duplicate prevention)
-      if (foundUpload.status === 'pending' && !foundUpload.fal_output_url && !processingStarted) {
-        setProcessingStarted(true)
-        processImage(foundUpload.id)
-      }
+      // Auto-processing will be handled by a separate useEffect
     } catch (error) {
       console.error('Error fetching upload:', error)
       setProcessing({
@@ -70,9 +59,9 @@ export default function EditorPage({ params }: { params: Promise<{ uploadId: str
     } finally {
       setLoading(false)
     }
-  }
+  }, [resolvedParams.uploadId])
 
-  const processImage = async (uploadId: string) => {
+  const processImage = useCallback(async (uploadId: string) => {
     try {
       // Double-check if already processing to prevent race conditions
       if (processing.status === 'processing') {
@@ -127,7 +116,20 @@ export default function EditorPage({ params }: { params: Promise<{ uploadId: str
         message: error instanceof Error ? error.message : 'Processing failed'
       })
     }
-  }
+  }, [processing.status])
+
+  // Fetch upload data
+  useEffect(() => {
+    fetchUpload()
+  }, [fetchUpload])
+
+  // Auto-start processing if needed
+  useEffect(() => {
+    if (upload && upload.status === 'pending' && !upload.fal_output_url && !processingStarted) {
+      setProcessingStarted(true)
+      processImage(upload.id)
+    }
+  }, [upload, processingStarted, processImage])
 
   const handleExport = async (canvasDataUrl: string, textLayers: TextLayer[]) => {
     try {
@@ -267,7 +269,7 @@ export default function EditorPage({ params }: { params: Promise<{ uploadId: str
                   Processing Your Image
                 </h3>
                 <p className="text-gray-600">
-                  We're removing the background using AI. This may take a few moments...
+                  We&apos;re removing the background using AI. This may take a few moments...
                 </p>
               </div>
             ) : processing.status === 'error' ? (

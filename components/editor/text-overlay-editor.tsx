@@ -5,7 +5,6 @@ import { Slider } from '@/components/ui/slider'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Download, RotateCcw, Type } from 'lucide-react'
-import Image from 'next/image'
 
 // Helper function to check if URL is from a trusted domain
 const isTrustedImageUrl = (url: string): boolean => {
@@ -36,10 +35,10 @@ const SafeImage = ({
   src: string
   alt: string
   className?: string
-  [key: string]: any
-}) => {
+} & React.ImgHTMLAttributes<HTMLImageElement>) => {
   if (isTrustedImageUrl(src)) {
     return (
+      // eslint-disable-next-line @next/next/no-img-element
       <img
         src={src}
         alt={alt}
@@ -52,6 +51,7 @@ const SafeImage = ({
   
   // Fallback for any other URLs
   return (
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       src={src}
       alt={alt}
@@ -108,7 +108,6 @@ export function TextOverlayEditor({
   
   const [selectedLayerId, setSelectedLayerId] = useState<string>('1')
   const [isDragging, setIsDragging] = useState(false)
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -131,13 +130,7 @@ export function TextOverlayEditor({
     setSelectedLayerId(layerId)
     setIsDragging(true)
     
-    const rect = containerRef.current?.getBoundingClientRect()
-    if (rect) {
-      setDragStart({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      })
-    }
+    // Start dragging - position tracking happens in mousemove
   }, [disabled])
 
   // Handle text dragging
@@ -164,7 +157,12 @@ export function TextOverlayEditor({
   useEffect(() => {
     if (isDragging) {
       const handleGlobalMouseMove = (e: MouseEvent) => {
-        handleMouseMove(e as any)
+        // Create a React-like event object with the properties we need
+        const reactEvent = {
+          clientX: e.clientX,
+          clientY: e.clientY,
+        } as React.MouseEvent
+        handleMouseMove(reactEvent)
       }
       
       const handleGlobalMouseUp = () => {
@@ -253,6 +251,7 @@ export function TextOverlayEditor({
       <canvas ref={canvasRef} className="hidden" />
       
       {/* Hidden images for canvas rendering */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         ref={backgroundImgRef}
         src={backgroundImageUrl}
@@ -261,6 +260,7 @@ export function TextOverlayEditor({
         crossOrigin="anonymous"
         onError={() => console.error('Failed to load background image:', backgroundImageUrl)}
       />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         ref={foregroundImgRef}
         src={foregroundImageUrl}
@@ -421,7 +421,7 @@ export function TextOverlayEditor({
           <ul className="text-sm text-blue-700 space-y-1">
             <li>• Click and drag text to reposition</li>
             <li>• Use controls to customize appearance</li>
-            <li>• Click "Export PNG" to download</li>
+            <li>• Click &quot;Export PNG&quot; to download</li>
           </ul>
         </div>
       </div>

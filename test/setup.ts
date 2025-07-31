@@ -1,4 +1,4 @@
-import { vi } from 'vitest'
+import { vi, beforeEach, afterEach } from 'vitest'
 
 // Mock environment variables for testing
 process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co'

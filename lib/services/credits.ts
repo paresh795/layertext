@@ -113,9 +113,9 @@ export async function addUserCredits(userId: string, amount: number): Promise<nu
  */
 export async function deductUserCredits(userId: string, amount: number = 1): Promise<number> {
   try {
-    const { data, error } = await supabaseAdmin
-      .rpc('decrement_user_credits', {
-        user_id_param: userId,
+    const { data: success, error } = await supabaseAdmin
+      .rpc('deduct_user_credits', {
+        clerk_user_id: userId,
         amount: amount
       })
 
@@ -123,7 +123,13 @@ export async function deductUserCredits(userId: string, amount: number = 1): Pro
       throw new Error(`Failed to deduct credits: ${error.message}`)
     }
 
-    return data
+    if (!success) {
+      throw new Error('Insufficient credits')
+    }
+
+    // Get remaining credits after successful deduction
+    const remainingCredits = await getUserCredits(userId)
+    return remainingCredits
   } catch (error) {
     console.error('Error deducting user credits:', error)
     throw error

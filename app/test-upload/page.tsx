@@ -54,6 +54,7 @@ export default async function TestUploadPage() {
             <div className="space-y-4">
               {uploads.slice(0, 5).map((upload) => (
                 <div key={upload.id} className="flex items-start space-x-4 p-4 border rounded-lg">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={upload.image_url}
                     alt="Upload preview"
@@ -149,7 +150,7 @@ export default async function TestUploadPage() {
             To fully test upload functionality, ensure:
           </p>
           <ul className="text-sm text-yellow-700 mt-1 space-y-1 list-disc list-inside">
-            <li>Supabase project created with 'images' storage bucket</li>
+            <li>Supabase project created with &apos;images&apos; storage bucket</li>
             <li>RLS policies allow authenticated users to upload</li>
             <li>Environment variables properly configured</li>
             <li>Database schema includes uploads table</li>

@@ -1,8 +1,6 @@
 import { currentUser } from '@clerk/nextjs/server'
 import { 
   getUserCredits, 
-  addCredits, 
-  deductCredits,
   getUserPayments,
   getUserUploads,
   getUserExports 
@@ -105,7 +103,7 @@ export default async function TestDatabasePage() {
                 <div className="max-h-32 overflow-y-auto">
                   {exports.slice(0, 3).map((exportItem) => (
                     <div key={exportItem.id} className="text-xs border-t border-cyan-200 pt-1 mt-1">
-                      <p>Text: "{exportItem.text_content.substring(0, 30)}..."</p>
+                      <p>Text: &quot;{exportItem.text_content.substring(0, 30)}...&quot;</p>
                       <p>Font: {exportItem.font_size}px {exportItem.font_color}</p>
                       <p>{new Date(exportItem.created_at).toLocaleDateString()}</p>
                     </div>

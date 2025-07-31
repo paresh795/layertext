@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { currentUser } from '@clerk/nextjs/server'
-import { getUserCredits, initializeUserCredits, addUserCredits } from '@/lib/services/credits'
+import { getUserCredits, addUserCredits } from '@/lib/services/credits'
 
 /**
  * GET /api/credits
  * Get user's current credit balance
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const user = await currentUser()
     
